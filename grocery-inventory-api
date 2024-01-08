@@ -1,0 +1,67 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "grocery-inventory",
+    "dateExported": "2024-01-08T11:24:58.512Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "906d47d8-68f2-4d23-95b2-4224a243bab6",
+            "name": "groceries",
+            "containerId": "",
+            "created": "2024-01-07T04:06:56.742Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "66fca0bd-7b81-4f00-b969-24cdac2ff826",
+            "colId": "a3dab577-30e3-4baf-b9c3-a69269302e9a",
+            "containerId": "906d47d8-68f2-4d23-95b2-4224a243bab6",
+            "name": "all grocery",
+            "url": "{baseurl}/grocery",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-01-07T04:07:17.904Z",
+            "modified": "2024-01-07T04:13:02.219Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "baseurl",
+                    "value": "",
+                    "isPath": true
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "686f9bc8-9894-4347-9c2b-5b99cb6d2e6e",
+            "colId": "a3dab577-30e3-4baf-b9c3-a69269302e9a",
+            "containerId": "906d47d8-68f2-4d23-95b2-4224a243bab6",
+            "name": "create grocery",
+            "url": "{baseurl}/grocery",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-01-07T04:13:10.258Z",
+            "modified": "2024-01-08T09:30:24.337Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "baseurl",
+                    "value": "",
+                    "isPath": true
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"brand\": \"Test\",\n  \"productName\": \"Banana\",\n  \"pricePerKg\": 80,\n  \"discountPercentage\": 1.5,\n  \"isAvailable\": false\n  \n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://localhost:4000/api"
+        }
+    }
+}
