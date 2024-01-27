@@ -3,7 +3,7 @@ const { model } = require("mongoose");
 const {
   allGrocery,
   createGrocery,
-} = require("../controllers/groceryController");
+} = require("../controllers/GroceryController");
 const router = express.Router();
 
 router.get("/", allGrocery);

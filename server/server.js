@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const connectDB = require("./config/db");
 const groceryRoutes = require("./routes/groceryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -24,7 +25,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use("/api/auth", authRoutes);
 app.use("/api/grocery", groceryRoutes);
 app.get("/", (req, res) => {
   res.send("Grocery Inventory");

@@ -1,11 +1,21 @@
 const CustomAPIError = require("./custom-error");
 const handleMongoError = (error) => {
-  if (error.errors) {
-    const errorMessages = Object.values(error.errors).map((err) => err.message);
-    return new CustomAPIError(errorMessages, 400);
+  let statusCode;
+  let errorMessages = {};
+  if (error.code === 11000) {
+    statusCode = 400;
+    errorMessages["email"] = "Email must be unique";
+  } else if (error.errors) {
+    statusCode = 400;
+    Object.keys(error.errors).forEach((field) => {
+      errorMessages[field] = error.errors[field].message;
+    });
   } else {
-    return new CustomAPIError("An error occurred. please try later", 500);
+    statusCode = 500;
+    errorMessages["error"] = `Internal server error. Please try again later.`;
   }
+
+  return new CustomAPIError(errorMessages, statusCode);
 };
 
 module.exports = handleMongoError;
