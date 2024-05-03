@@ -50,14 +50,28 @@ const userSchema = new mongoose.Schema(
 
 // Hash the password before saving to the database
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+
   try {
-    const hashPassword = await bcrypt.hash(this.password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(this.password, salt);
     this.password = hashPassword;
     next();
   } catch (error) {
     next(handleMongoError(error));
   }
 });
+
+// compare passwords for login credentials
+userSchema.methods.matchPassword = async function (password) {
+  try {
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    next(handleMongoError(error));
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 

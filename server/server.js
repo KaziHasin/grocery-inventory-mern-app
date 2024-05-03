@@ -1,37 +1,41 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/db");
-const groceryRoutes = require("./routes/groceryRoutes");
-const authRoutes = require("./routes/authRoutes");
+const groceryRoute = require("./routes/groceryRoute");
+const authRoute = require("./routes/authRoute");
 const app = express();
+const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 4000;
-
-connectDB();
-// Middleware
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+// import middlewares
 const notFound = require("./middleware/not-found");
 const errorHandling = require("./middleware/error-handling");
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
-
+// configuration some packages
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/auth", authRoutes);
-app.use("/api/grocery", groceryRoutes);
+app.use(cookieParser());
+
+// calling routes
+app.use("/api/auth", authRoute);
+app.use("/api/grocery", groceryRoute);
 app.get("/", (req, res) => {
   res.send("Grocery Inventory");
 });
 
+// configuration of the middleware
 app.use(notFound);
 app.use(errorHandling);
 
-app.listen(PORT, () => console.log(`Server listen on port ${PORT}`));
+// start the server
+const start = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => console.log(`Server listen on port ${PORT}`));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();

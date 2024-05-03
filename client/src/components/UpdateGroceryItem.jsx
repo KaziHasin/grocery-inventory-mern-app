@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loader from './Loader';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../config';
 
 
-const AddGroceryItem = ({ closeModal }) => {
+const UpdateGroceryItem = ({ groceryId, closeModal }) => {
   const [formData, setFormData] = useState({
     brand: '',
     productName: '',
@@ -20,7 +20,33 @@ const AddGroceryItem = ({ closeModal }) => {
   });
   const [loading, setLoading] = useState(false)
 
-  const baseUrl = 'http://localhost:4000/api';
+  useEffect(() => {
+    getGroceryItem();
+  }, [groceryId])
+
+  const getGroceryItem = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/grocery/${groceryId}`, {
+        credentials: "include"
+      });
+
+      if (!res.ok) { throw new Error("Failed to fetch data"); }
+
+      const result = await res.json();
+      if (result.grocery) {
+        const updateFormData = {
+          ...result.grocery,
+          discountPercentage: result.grocery.discountPercentage || '',
+        };
+        setFormData(updateFormData);
+      }
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -30,8 +56,8 @@ const AddGroceryItem = ({ closeModal }) => {
     setLoading(true)
 
     try {
-      const res = await fetch(`${BASE_URL}/grocery`, {
-        method: "POST",
+      const res = await fetch(`${BASE_URL}/grocery/${groceryId}`, {
+        method: "PUT",
         headers: {
           'Content-Type': 'application/json'
         },
@@ -46,6 +72,7 @@ const AddGroceryItem = ({ closeModal }) => {
       const result = await res.json();
       toast.success(result.message);
       closeModal();
+
     } catch (err) {
       if (err.message && err.message.startsWith('Server error')) {
         const errors = JSON.parse(err.message.split(' - ')[1]);
@@ -66,7 +93,7 @@ const AddGroceryItem = ({ closeModal }) => {
     <div className="fixed inset-0 flex items-center justify-center">
       <div className="bg-black opacity-50 fixed inset-0" onClick={closeModal}>X</div>
       <div className="bg-white p-6 rounded-lg z-10 max-w-xl w-full">
-        <h2 className="text-2xl font-bold mb-4">Add Grocery Item</h2>
+        <h2 className="text-2xl font-bold mb-4">Update Grocery Item</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="brand" className="block text-sm font-medium text-gray-700">
@@ -79,7 +106,6 @@ const AddGroceryItem = ({ closeModal }) => {
               value={formData.brand}
               onChange={handleChange}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-
             />
             {errors.brand && <p className="text-red-500 text-sm">{errors.brand}</p>}
           </div>
@@ -94,7 +120,6 @@ const AddGroceryItem = ({ closeModal }) => {
               value={formData.productName}
               onChange={handleChange}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-
             />
             {errors.productName && <p className="text-red-500 text-sm">{errors.productName}</p>}
           </div>
@@ -109,9 +134,9 @@ const AddGroceryItem = ({ closeModal }) => {
               value={formData.pricePerKg}
               onChange={handleChange}
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-
             />
             {errors.pricePerKg && <p className="text-red-500 text-sm">{errors.pricePerKg}</p>}
+
           </div>
           <div className="mb-4">
             <label htmlFor="discountPercentage" className="block text-sm font-medium text-gray-700">
@@ -143,7 +168,7 @@ const AddGroceryItem = ({ closeModal }) => {
             </select>
           </div>
           <button type="submit" className="btn bg-green-600 text-white p-2">
-            {loading ? <Loader /> : 'Add Item'}
+            {loading ? <Loader /> : 'Update Item'}
           </button>
         </form>
       </div>
@@ -151,4 +176,4 @@ const AddGroceryItem = ({ closeModal }) => {
   );
 };
 
-export default AddGroceryItem;
+export default UpdateGroceryItem;

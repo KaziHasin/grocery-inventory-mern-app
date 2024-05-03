@@ -33,7 +33,64 @@ const createGrocery = async (req, res, next) => {
   }
 };
 
+
+/** Show a new grocery item
+ * @method GET api/grocery/:id
+ * @param {Object} req
+ * @param {Object} res
+ */
+const showGrocery = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const grocery = await Grocery.findById(id);
+    res
+      .status(200)
+      .json({ grocery });
+  } catch (error) {
+    next(handleMongoError(error));
+  }
+};
+
+
+/** Update a new grocery item
+ * @method PUT api/grocery/:id
+ * @param {Object} req
+ * @param {Object} res
+ */
+const updateGrocery = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const grocery = await Grocery.findOneAndUpdate({ _id: id }, req.body, { new: true, runValidators: true });
+    res
+      .status(200)
+      .json({ grocery, message: "Grocery Item Updated successfully" });
+  } catch (error) {
+    next(handleMongoError(error));
+  }
+};
+
+
+/** Delete a new grocery item
+ * @method DELETE api/grocery/:id
+ * @param {Object} req
+ * @param {Object} res
+ */
+const deleteGrocery = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const grocery = await Grocery.deleteOne({ _id: id });
+    res
+      .status(200)
+      .json({ grocery, message: "Grocery Item Deleted successfully" });
+  } catch (error) {
+    next(handleMongoError(error));
+  }
+};
+
 module.exports = {
   allGrocery,
   createGrocery,
+  showGrocery,
+  updateGrocery,
+  deleteGrocery
 };
