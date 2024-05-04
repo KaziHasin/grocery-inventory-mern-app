@@ -6,6 +6,7 @@ import "./index.css";
 import LoginScreen from "./screens/LoginScreen.jsx";
 import RegisterScreen from "./screens/RegisterScreen.jsx";
 import { HomeScreen } from "./screens/HomeScreen.jsx";
+import Modal from 'react-modal';
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 
 const router = createBrowserRouter(
@@ -20,7 +21,7 @@ const router = createBrowserRouter(
   )
 );
 
-
+Modal.setAppElement('#root');
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />

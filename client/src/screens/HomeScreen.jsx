@@ -4,13 +4,16 @@ import GroceryItems from '../components/GroceryItems';
 import Loader from '../components/Loader';
 import { FaPlus } from "react-icons/fa";
 import { BASE_URL } from '../config';
+import { toast } from 'react-toastify';
+import { confirm } from '../components/confirm';
 
 
 export const HomeScreen = () => {
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const fetchItems = async () => {
     try {
@@ -38,13 +41,44 @@ export const HomeScreen = () => {
   }, []);
 
   const openModal = () => {
-    setIsModalOpen(true);
+    setIsAddModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    fetchItems();
+    if (isAddModalOpen || isUpdateModalOpen) {
+      setIsAddModalOpen(false);
+      setIsUpdateModalOpen(false);
+      fetchItems();
+    }
   };
+
+
+  const deleteGroceryItem = async (id) => {
+
+    if (await confirm({
+      confirmation: 'Are you sure?',
+      text: 'Delete Confirmation',
+    })) {
+      try {
+        const res = await fetch(`${BASE_URL}/grocery/${id}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+
+        if (!res.ok) { throw new Error("Failed to fetch data"); }
+
+        const result = await res.json();
+        if (result.message) {
+          toast.success(result.message);
+          fetchItems();
+        }
+
+      } catch (error) {
+        console.log(error);
+
+      }
+    }
+  }
 
   return (
     <div className="container mx-auto px-3 mt-4">
@@ -61,14 +95,15 @@ export const HomeScreen = () => {
           <FaPlus /> &nbsp;Add Item
         </button>
       </div>
-      {isModalOpen && <AddGroceryItem closeModal={closeModal} />}
+      {isAddModalOpen && <AddGroceryItem closeModal={closeModal} />}
 
       {loading ? (
         <div className="w-full flex justify-center">
           <Loader />
         </div>
       ) : (
-        <GroceryItems items={items} />
+
+        <GroceryItems items={items} closeModal={closeModal} isUpdateModalOpen={isUpdateModalOpen} setIsUpdateModalOpen={setIsUpdateModalOpen} deleteGroceryItem={deleteGroceryItem} />
       )}
     </div>
 

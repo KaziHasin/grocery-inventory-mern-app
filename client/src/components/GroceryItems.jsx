@@ -1,44 +1,19 @@
 import React, { useState } from 'react';
 import CardItem from './CardItem';
 import UpdateGroceryItem from './UpdateGroceryItem';
-import { BASE_URL } from '../config';
-import { toast } from 'react-toastify';
 
-const GroceryItems = ({ items }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+const GroceryItems = ({ items, closeModal, setIsUpdateModalOpen, isUpdateModalOpen, deleteGroceryItem }) => {
+
     const [selectedGroceryId, setSelectedGroceryId] = useState(null);
-
 
     const openModal = (id) => {
         setSelectedGroceryId(id);
-        setIsModalOpen(true);
+        setIsUpdateModalOpen(true);
     };
 
-    const deleteGroceryItem = async (id) => {
-        try {
-            const res = await fetch(`${BASE_URL}/grocery/${id}`, {
-                method: 'DELETE',
-                credentials: 'include'
-            });
 
-            if (!res.ok) { throw new Error("Failed to fetch data"); }
-
-            const result = await res.json();
-            if (result.message) {
-                toast.success(result.message);
-            }
-
-
-        } catch (error) {
-            console.log(error);
-
-        }
-    }
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-
-    };
     return (
         <div className="overflow-x-auto">
             {items.length > 0 ? (
@@ -66,7 +41,7 @@ const GroceryItems = ({ items }) => {
                 <p className="text-center bg-blue-500 text-white p-3 mt-4">No items are available in inventory.</p>
             )}
 
-            {isModalOpen && <UpdateGroceryItem groceryId={selectedGroceryId} closeModal={closeModal} />}
+            {isUpdateModalOpen && <UpdateGroceryItem groceryId={selectedGroceryId} closeModal={closeModal} />}
 
         </div>
     );
